@@ -1,0 +1,74 @@
+{
+  "name": "com.akylas.bpxcel2pdf",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akylas/pbexcel2pdf.git"
+  },
+  "author": {
+    "name": "Martin Guillon",
+    "email": "martin@akylas.fr"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Akylas/pbexcel2pdf/issues"
+  },
+  "homepage": "https://github.com/Akylas/pbexcel2pdf#readme",
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": true,
+    "singleQuote": true
+  },
+  "private": true,
+  "scripts": {
+    "dev": "tauri dev",
+    "dev:web": "vite",
+    "tauri": "tauri",
+    "build": "tauri build",
+    "build:web": "vite build",
+    "test": "cargo test --manifest-path ./src-tauri/Cargo.toml",
+    "format": "prettier --write --plugin-search-dir=. src *.js && eslint --fix src *.js",
+    "check": "cargo check --manifest-path src-tauri/Cargo.toml && eslint src *.js && svelte-check",
+    "release": "standard-version --commit-all --preset angular"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
+    "@sveltejs/vite-plugin-svelte": "1.0.0-next.41",
+    "@tauri-apps/api": "1.0.0-rc.3",
+    "@tauri-apps/cli": "1.0.0-rc.8",
+    "@tauri-apps/toml": "^2.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.18.0",
+    "@typescript-eslint/parser": "^5.18.0",
+    "cssnano": "^5.1.7",
+    "eslint": "^8.12.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-svelte3": "^3.4.1",
+    "node-sass": "^7.0.1",
+    "prettier": "^2.6.2",
+    "prettier-plugin-svelte": "^2.6.0",
+    "sass": "^1.50.0",
+    "standard-version": "^9.3.2",
+    "svelte": "^3.46.6",
+    "svelte-check": "^2.4.6",
+    "svelte-preprocess": "^4.10.5",
+    "typescript": "^4.6.3",
+    "vite": "^2.9.1"
+  },
+  "dependencies": {
+    "carbon-components": "^10.56.0",
+    "carbon-components-svelte": "^0.62.3",
+    "carbon-icons-svelte": "^10.45.1",
+    "convert-excel-to-json": "^1.7.0",
+    "events": "^3.3.0",
+    "svelte-i18n": "^3.4.0",
+    "svelte-tauri-filedrop": "^1.0.0",
+    "xlsx": "^0.18.5"
+  },
+  "version": "1.1.0"
+}

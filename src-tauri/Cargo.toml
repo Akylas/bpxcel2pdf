@@ -1,0 +1,31 @@
+[package]
+name = "BPExcel2Pdf"
+version = "1.5.1"
+description = "Bonne Pioche Excel to Pdf"
+authors = [ "dev@akylasfr" ]
+license = "MIT"
+repository = "https://github.com/Akylas/pbexcel2pdf"
+default-run = "BPExcel2Pdf"
+edition = "2018"
+build = "src/build.rs"
+include = [ "**/*.rs" ]
+
+[build-dependencies]
+tauri-build = { version = "1.0.0-rc.5", features = [] }
+
+[dependencies]
+flate2 = "1.0"
+serde_json = "1.0"
+serde = { version = "1.0", features = [ "derive" ] }
+tauri = { version = "1.0.0-rc.6", features = ["dialog-open", "fs-read-file", "fs-write-file", "path-all", "protocol-asset", "shell-open", "window-print"] }
+
+[features]
+default = [ "custom-protocol" ]
+custom-protocol = [ "tauri/custom-protocol" ]
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+incremental = false
+opt-level = "s"
