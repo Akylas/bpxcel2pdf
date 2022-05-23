@@ -4,16 +4,27 @@
   import { basename } from '@tauri-apps/api/path';
   import { open as openURl } from '@tauri-apps/api/shell';
   import {
+    Button,
+    DataTable,
     Header,
     HeaderGlobalAction,
     HeaderUtilities,
     SkipToContent,
+    Modal,
+    TextInput,
+    Toolbar,
+    ToolbarContent,
   } from 'carbon-components-svelte';
   import Printer16 from 'carbon-icons-svelte/lib/Printer16';
+  import SettingsAdjust16 from 'carbon-icons-svelte/lib/SettingsAdjust16';
+  import TrashCan16 from 'carbon-icons-svelte/lib/TrashCan16';
   import { _ } from 'svelte-i18n';
   import FileDrop from 'svelte-tauri-filedrop';
   import * as xlsx from 'xlsx';
 
+  let settingsOpened = false;
+  let addIgnoredOpened = false;
+  let addIgnoredFieldOpened = false;
   let firstnameField = localStorage.getItem('firstnameField') || 'Prénom';
   let nameField = localStorage.getItem('nameField') || 'Nom';
   let phoneField = localStorage.getItem('phoneField') || 'Téléphone';
@@ -41,14 +52,12 @@
     const source = await readBinaryFile(currentFilePath);
     const xlsxData = xlsx.read(source, { type: 'array' });
     const sheet = xlsxData.Sheets[xlsxData.SheetNames[0]];
-    json = xlsx.utils
-      .sheet_to_json(sheet)
+    json = xlsx.utils.sheet_to_json(sheet);
     json = json.filter(
-        (c) =>
-          ignoredNames.indexOf(c[nameField]) === -1 && ignoredNames.indexOf(c[phoneField]) === -1
-      ) as any;
+      (c) => ignoredNames.indexOf(c[nameField]) === -1 && ignoredNames.indexOf(c[phoneField]) === -1
+    ) as any;
 
-      total = json.length
+    total = json.length;
 
     json.forEach((d) => {
       ignoredFields.forEach((k) => delete d[k]);
@@ -78,6 +87,57 @@
         break;
     }
   });
+
+  async function deleteIgnoredItem(row) {
+    if (row.id) {
+      const index = ignoredNames.indexOf(row.id);
+      if (index >= 0) {
+        ignoredNames.splice(index, 1);
+
+        localStorage.setItem('ignoredNames', JSON.stringify(ignoredNames));
+        ignoredNames = ignoredNames;
+      }
+    }
+  }
+  async function addIgnoredItem() {
+    if (addIgnoredNew) {
+      ignoredNames.push(addIgnoredNew);
+      localStorage.setItem('ignoredNames', JSON.stringify(ignoredNames));
+      ignoredNames = ignoredNames;
+      addIgnoredNew = null;
+      addIgnoredOpened = false;
+    }
+  }
+
+  let addIgnoredNew;
+  async function onAddingIgnoredChange(event) {
+    addIgnoredNew = event.detail;
+  }
+  async function deleteIgnoredField(row) {
+    if (row.id) {
+      const index = ignoredFields.indexOf(row.id);
+      if (index >= 0) {
+        ignoredFields.splice(index, 1);
+
+        localStorage.setItem('ignoredFields', JSON.stringify(ignoredFields));
+        ignoredFields = ignoredFields;
+      }
+    }
+  }
+  async function addIgnoredField() {
+    if (addIgnoredFieldNew) {
+      ignoredFields.push(addIgnoredFieldNew);
+      localStorage.setItem('ignoredFields', JSON.stringify(ignoredFields));
+      ignoredFields = ignoredFields;
+      addIgnoredFieldNew = null;
+      addIgnoredFieldOpened = false;
+    }
+  }
+
+  let addIgnoredFieldNew;
+  async function onAddingIgnoredFieldChange(event) {
+    addIgnoredFieldNew = event.detail;
+  }
 </script>
 
 <div class="container">
@@ -87,6 +147,11 @@
     </svelte:fragment>
     <HeaderUtilities>
       <HeaderGlobalAction aria-label={$_('print')} icon={Printer16} on:click={printPDF} />
+      <HeaderGlobalAction
+        aria-label={$_('settings')}
+        icon={SettingsAdjust16}
+        on:click={() => (settingsOpened = !settingsOpened)}
+      />
     </HeaderUtilities>
   </Header>
 
@@ -133,6 +198,107 @@
       </div>
     </FileDrop>
   </div>
+
+  <Modal
+    size="sm"
+    bind:open={settingsOpened}
+    modalHeading={$_('settings')}
+    primaryButtonText={$_('save')}
+    secondaryButtonText={$_('cancel')}
+    on:click:button--secondary={() => (settingsOpened = false)}
+    on:open
+    on:close
+    on:submit
+  >
+    <div style="padding:10px">
+      <DataTable
+        title={$_('ignored')}
+        description={$_('ignored_items')}
+        size="short"
+        headers={[
+          { key: 'name', value: $_('name') },
+          { key: 'overflow', empty: true },
+        ]}
+        rows={ignoredNames.map((s) => ({ id: s, name: s }))}
+      >
+        <svelte:fragment slot="cell" let:cell let:row>
+          {#if cell.key === 'overflow'}
+            <Button
+              kind="danger-ghost"
+              iconDescription={$_('delete')}
+              size="small"
+              icon={TrashCan16}
+              on:click={() => deleteIgnoredItem(row)}
+            />
+            <!-- <OverflowMenu flipped>
+              <OverflowMenuItem danger text={$_('delete')} on:click={deleteIgnoredItem} />
+            </OverflowMenu> -->
+          {:else}{cell.value}{/if}
+        </svelte:fragment>
+        <Toolbar size="sm">
+          <ToolbarContent>
+            <Button on:click={() => (addIgnoredOpened = true)}>{$_('add')}</Button>
+          </ToolbarContent>
+        </Toolbar>
+      </DataTable>
+
+      <DataTable
+        title={$_('ignored_fields')}
+        description={$_('ignored_fields_items')}
+        size="short"
+        headers={[
+          { key: 'name', value: $_('name') },
+          { key: 'overflow', empty: true },
+        ]}
+        rows={ignoredFields.map((s) => ({ id: s, name: s }))}
+      >
+        <svelte:fragment slot="cell" let:cell let:row>
+          {#if cell.key === 'overflow'}
+            <Button
+              kind="danger-ghost"
+              iconDescription={$_('delete')}
+              size="small"
+              icon={TrashCan16}
+              on:click={() => deleteIgnoredField(row)}
+            />
+            <!-- <OverflowMenu flipped>
+              <OverflowMenuItem danger text={$_('delete')} on:click={deleteIgnoredItem} />
+            </OverflowMenu> -->
+          {:else}{cell.value}{/if}
+        </svelte:fragment>
+        <Toolbar size="sm">
+          <ToolbarContent>
+            <Button on:click={() => (addIgnoredFieldOpened = true)}>{$_('add')}</Button>
+          </ToolbarContent>
+        </Toolbar>
+      </DataTable>
+    </div>
+  </Modal>
+
+  <Modal
+    bind:open={addIgnoredOpened}
+    modalHeading={$_('add_ignored')}
+    primaryButtonText={$_('add')}
+    secondaryButtonText={$_('cancel')}
+    on:click:button--secondary={() => (addIgnoredOpened = false)}
+    on:open
+    on:close
+    on:submit={addIgnoredItem}
+  >
+    <TextInput labelText={$_('text')} on:change={onAddingIgnoredChange} />
+  </Modal>
+  <Modal
+    bind:open={addIgnoredFieldOpened}
+    modalHeading={$_('add_ignored')}
+    primaryButtonText={$_('add')}
+    secondaryButtonText={$_('cancel')}
+    on:click:button--secondary={() => (addIgnoredFieldOpened = false)}
+    on:open
+    on:close
+    on:submit={addIgnoredField}
+  >
+    <TextInput labelText={$_('text')} on:change={onAddingIgnoredFieldChange} />
+  </Modal>
 </div>
 
 <style>

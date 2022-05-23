@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
     publicDir: '../public',
     clearScreen: false,
     server: {
-      port: 3000,
+      port: 3001,
       strictPort: true,
     },
 

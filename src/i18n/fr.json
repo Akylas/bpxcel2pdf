@@ -1,3 +1,13 @@
 {
-  "print": "imprimer"
+  "add": "ajouter",
+  "cancel": "annuler",
+  "delete": "supprimer",
+  "ignored": "lignes ignorées",
+  "ignored_fields": "colonnes ignorées",
+  "ignored_fields_items": "liste des colonnes ignorées lors de l'import",
+  "ignored_items": "liste des lignes ignorées lors de l'import",
+  "name": "nom",
+  "print": "imprimer",
+  "save": "enregistrer",
+  "settings": "paramètres"
 }

@@ -94,11 +94,14 @@ $css--plex: true;
 // Optionally include components that you need
 @import 'carbon-components/scss/components/button/button';
 @import 'carbon-components/scss/components/radio-button/radio-button';
+@import 'carbon-components/scss/components/text-input/text-input';
 @import 'carbon-components/scss/components/checkbox/checkbox';
 @import 'carbon-components/scss/components/toggle/toggle';
 @import 'carbon-components/scss/components/select/select';
 @import 'carbon-components/scss/components/slider/slider';
 @import 'carbon-components/scss/components/tile/tile';
+@import 'carbon-components/scss/components/modal/modal';
+@import 'carbon-components/scss/components/toolbar/toolbar';
 @import 'carbon-components/scss/components/data-table-v2/data-table-v2';
 @import 'carbon-components/scss/components/ui-shell/ui-shell';
 
