@@ -89,10 +89,6 @@ jobs:
         with:
           working-directory: "src-tauri"
 
-
-      - name: install app dependencies and build it
-        run: pnpm install && pnpm install --dir src/geo-three
-
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
