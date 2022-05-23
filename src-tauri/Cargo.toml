@@ -1,6 +1,6 @@
 [package]
 name = "BPExcel2Pdf"
-version = "1.5.1"
+version = "1.0.0"
 description = "Bonne Pioche Excel to Pdf"
 authors = [ "dev@akylasfr" ]
 license = "MIT"
