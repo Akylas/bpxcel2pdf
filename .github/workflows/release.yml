@@ -71,7 +71,7 @@ jobs:
         with:
           version: 7
           run_install: |
-            - args: [--frozen-lockfile]
+            - args: [--no-frozen-lockfile]
 
       - name: Node.js setup
         uses: actions/setup-node@v2
