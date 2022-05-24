@@ -1,3 +1,18 @@
 {
-  "print": "print"
+  "add": "add",
+  "add_ignored": "Add",
+  "cancel": "cancel",
+  "close": "close",
+  "delete": "delete",
+  "drag_xslx_file": "drag a xlsx or csv file",
+  "file": "file",
+  "ignored": "lines ignored",
+  "ignored_fields": "columns ignored",
+  "ignored_fields_items": "list of columns ignored during import",
+  "ignored_items": "list of lines ignored during import",
+  "name": "name",
+  "print": "print",
+  "save": "save",
+  "settings": "parameters",
+  "text": "text"
 }

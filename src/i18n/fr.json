@@ -1,7 +1,11 @@
 {
   "add": "ajouter",
+  "add_ignored": "Ajouter",
   "cancel": "annuler",
+  "close": "fermer",
   "delete": "supprimer",
+  "drag_xslx_file": "glisser un fichier xlsx ou csv",
+  "file": "fichier",
   "ignored": "lignes ignorées",
   "ignored_fields": "colonnes ignorées",
   "ignored_fields_items": "liste des colonnes ignorées lors de l'import",
@@ -9,5 +13,6 @@
   "name": "nom",
   "print": "imprimer",
   "save": "enregistrer",
-  "settings": "paramètres"
+  "settings": "paramètres",
+  "text": "texte"
 }

@@ -61,7 +61,7 @@
     "vite": "^2.9.9"
   },
   "dependencies": {
-    "carbon-components": "^10.56.0",
+    "carbon-components": "next",
     "carbon-components-svelte": "^0.64.0",
     "carbon-icons-svelte": "^11.0.1",
     "convert-excel-to-json": "^1.7.0",

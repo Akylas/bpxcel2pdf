@@ -3,6 +3,7 @@
   import { readBinaryFile } from '@tauri-apps/api/fs';
   import { basename } from '@tauri-apps/api/path';
   import { open as openURl } from '@tauri-apps/api/shell';
+  import { open } from '@tauri-apps/api/dialog';
   import {
     Button,
     DataTable,
@@ -47,6 +48,25 @@
   let json: { [k: string]: string }[] = null;
   let currentFilePath: string = null;
   let total = 0;
+
+  async function openFile() {
+    try {
+      const resPath = await open({
+        filters: [{ name: 'excel', extensions: ['xlsx', 'csv'] }],
+        multiple: false,
+        directory: false,
+      });
+      handleDroppedFile(Array.isArray(resPath) ? resPath : [resPath]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function reload() {
+    if (currentFilePath) {
+      handleDroppedFile([currentFilePath]);
+    }
+  }
   async function handleDroppedFile(paths: string[]) {
     currentFilePath = paths[0];
     const source = await readBinaryFile(currentFilePath);
@@ -155,7 +175,7 @@
     </HeaderUtilities>
   </Header>
 
-  <div style="padding-top:3rem;flex:auto;display:flex;height:100%;">
+  <div style="padding-top:3rem;flex:auto;display:flex;height:100%;justify-content:center;">
     {#if json}
       <div
         id="section-to-print"
@@ -186,12 +206,16 @@
           <!-- </div> -->
         </div>
       </div>
+    {:else}
+      <Button style="align-self:center;text-align:center;" on:click={openFile}
+        >{$_('drag_xslx_file')}</Button
+      >
     {/if}
     <FileDrop extensions={['xlsx', 'csv']} handleFiles={handleDroppedFile} let:files>
       <div class="dropzone" class:droppable={files.length > 0}>
         {#if files.length > 0}
           <h1 style:text-align="center" style:word-break="break-word">
-            Import Excel: <br />
+            {$_('file')}: <br />
             {files[0]}
           </h1>
         {/if}
@@ -203,11 +227,10 @@
     size="sm"
     bind:open={settingsOpened}
     modalHeading={$_('settings')}
-    primaryButtonText={$_('save')}
-    secondaryButtonText={$_('cancel')}
-    on:click:button--secondary={() => (settingsOpened = false)}
+    primaryButtonText={$_('close')}
+    on:click:button--primary={() => (settingsOpened = false)}
     on:open
-    on:close
+    on:close={reload}
     on:submit
   >
     <div style="padding:10px">
