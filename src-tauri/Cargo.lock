@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "BPExcel2Pdf"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "flate2",
  "serde",
