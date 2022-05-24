@@ -15,9 +15,9 @@
     Toolbar,
     ToolbarContent,
   } from 'carbon-components-svelte';
-  import Printer16 from 'carbon-icons-svelte/lib/Printer16';
-  import SettingsAdjust16 from 'carbon-icons-svelte/lib/SettingsAdjust16';
-  import TrashCan16 from 'carbon-icons-svelte/lib/TrashCan16';
+  import Printer16 from 'carbon-icons-svelte/lib/Printer.svelte';
+  import SettingsAdjust16 from 'carbon-icons-svelte/lib/SettingsAdjust.svelte';
+  import TrashCan16 from 'carbon-icons-svelte/lib/TrashCan.svelte';
   import { _ } from 'svelte-i18n';
   import FileDrop from 'svelte-tauri-filedrop';
   import * as xlsx from 'xlsx';
