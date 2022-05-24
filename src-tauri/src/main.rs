@@ -12,8 +12,10 @@ struct Payload {
 
 fn main() {
   let ctx = tauri::generate_context!();
-  let menu = Menu::new()
-    .add_submenu(Submenu::new(
+  let mut menu = Menu::new();
+  #[cfg(target_os = "macos")]
+  {
+    menu = menu.add_submenu(Submenu::new(
       &ctx.package_info().name,
       Menu::with_items([
         MenuItem::About(ctx.package_info().name.clone(), AboutMetadata::new()).into(),
@@ -27,7 +29,9 @@ fn main() {
         MenuItem::Quit.into(),
       ]),
     ))
-    .add_submenu(Submenu::new(
+  }
+  
+  menu = menu.add_submenu(Submenu::new(
       "File",
       Menu::with_items([
         CustomMenuItem::new("open", "Open...")
