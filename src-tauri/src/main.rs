@@ -1,7 +1,10 @@
-use std::env;
+#![cfg_attr(
+  all(not(debug_assertions), target_os = "windows"),
+  windows_subsystem = "windows"
+)]
 
 use tauri::{
-  AboutMetadata, CustomMenuItem, Menu, MenuEntry, MenuItem, Submenu, WindowBuilder, WindowUrl,
+  AboutMetadata, CustomMenuItem, Menu, MenuItem, Submenu, WindowBuilder, WindowUrl,
 };
 
 // the payload type must implement `Serialize`.
