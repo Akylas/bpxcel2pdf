@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.4](https://github.com/Akylas/pbexcel2pdf/compare/v1.0.3...v1.0.4) (2022-05-24)
+
+
+### Bug Fixes
+
+* remove windows command window ([19f1d34](https://github.com/Akylas/pbexcel2pdf/commit/19f1d34b97d349f2d46db219661d2fc2157ec50a))
+
+
+
 ## [1.0.3](https://github.com/Akylas/pbexcel2pdf/compare/v1.0.2...v1.0.3) (2022-05-24)
 
 
