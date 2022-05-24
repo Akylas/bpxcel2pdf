@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.3](https://github.com/Akylas/pbexcel2pdf/compare/v1.0.2...v1.0.3) (2022-05-24)
+
+
+### Bug Fixes
+
+* menu fix for non macos platforms ([7840cae](https://github.com/Akylas/pbexcel2pdf/commit/7840cae86b40165ba550b77dd57c43693217f2a3))
+
+
+
 ## [1.0.2](https://github.com/Akylas/pbexcel2pdf/compare/v1.0.1...v1.0.2) (2022-05-24)
 
 
