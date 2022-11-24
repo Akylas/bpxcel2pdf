@@ -26,7 +26,7 @@ body {
   min-height: 10cm;
   /* max-height: 20cåm; */
   padding: 0px 10px 10px 10px;
-  margin-bottom:5px;
+  margin-bottom: 5px;
   border: 0.5px solid black;
   -webkit-column-break-inside: avoid;
   -webkit-break-inside: avoid-page;
@@ -36,9 +36,8 @@ body {
 .cardTitle {
   font-weight: bold;
   padding: 4px;
-  text-align:center;
+  text-align: center;
   border: 0.5px solid black;
-
 }
 @media only print {
   html,
@@ -65,4 +64,15 @@ body {
     overflow-y: visible !important;
     overflow: visible !important;
   }
+}
+
+.bx--tabs__nav {
+  width: 100% !important;
+  flex-grow: 1;
+  height: 3rem !important;
+}
+.bx--tabs__nav-link {
+  text-align: center;
+  width: 100% !important;
+  height: 3rem !important;
 }
