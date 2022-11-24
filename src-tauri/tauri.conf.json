@@ -37,7 +37,7 @@
         "frameworks": [],
         "minimumSystemVersion": "10.13",
         "exceptionDomain": "localhost",
-        "signingIdentity": null,
+        "signingIdentity": "Apple Development: Martin Guillon (4ZZRPWM525)",
         "entitlements": null
       },
       "windows": {
