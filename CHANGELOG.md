@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.1.0](https://github.com/Akylas/bpxcel2pdf/compare/v1.0.4...v1.1.0) (2023-03-15)
+
+
+### Features
+
+* support wix csv form export ([c7a90ab](https://github.com/Akylas/bpxcel2pdf/commit/c7a90ab48e6bb7c4936dba194bec399839101530))
+
+
+
 ## [1.0.4](https://github.com/Akylas/pbexcel2pdf/compare/v1.0.3...v1.0.4) (2022-05-24)
 
 
