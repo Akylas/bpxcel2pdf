@@ -2,7 +2,7 @@
   "name": "com.akylas.bpxcel2pdf",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Akylas/pbexcel2pdf.git"
+    "url": "git+https://github.com/Akylas/bpxcel2pdf.git"
   },
   "author": {
     "name": "Martin Guillon",
@@ -10,9 +10,9 @@
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Akylas/pbexcel2pdf/issues"
+    "url": "https://github.com/Akylas/bpxcel2pdf/issues"
   },
-  "homepage": "https://github.com/Akylas/pbexcel2pdf#readme",
+  "homepage": "https://github.com/Akylas/bpxcel2pdf#readme",
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"

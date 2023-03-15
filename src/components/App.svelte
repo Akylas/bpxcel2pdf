@@ -222,7 +222,7 @@
   </Header>
   <Tabs bind:selected style="padding-top:3rem;width:100%;">
     <Tab label="Précommandes" />
-    <Tab label="Résumé Forme" />
+    <!-- <Tab label="Résumé Forme" /> -->
     <svelte:fragment slot="content">
       <TabContent style="height:100%;padding-top:3rem;">
         <div style="padding-top:10px; flex:auto;display:flex;height:100% !important;justify-content:center;">
@@ -273,7 +273,7 @@
           </FileDrop>
         </div>
       </TabContent>
-      <TabContent />
+      <!-- <TabContent /> -->
     </svelte:fragment>
   </Tabs>
 
