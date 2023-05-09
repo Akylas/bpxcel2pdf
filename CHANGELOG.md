@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.2](https://github.com/Akylas/bpxcel2pdf/compare/v1.1.0...v1.1.2) (2023-05-09)
+
+
+### Bug Fixes
+
+* trying to fix print and break pages ([05a9837](https://github.com/Akylas/bpxcel2pdf/commit/05a9837c88931aff398d211aabc770bd325ab861))
+
+
+
 ## [1.1.0](https://github.com/Akylas/bpxcel2pdf/compare/v1.0.4...v1.1.0) (2023-03-15)
 
 
