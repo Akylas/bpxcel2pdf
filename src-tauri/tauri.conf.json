@@ -1,84 +1,57 @@
 {
-  "package": {
-    "productName": "BPExcel2Pdf"
-  },
+  "productName": "BPExcel2Pdf",
+  "identifier": "com.akylas.bpxcel2pdf",
   "build": {
-    "distDir": "../build",
-    "devPath": "http://localhost:3001",
+    "frontendDist": "../build",
+    "devUrl": "http://localhost:3001",
     "beforeDevCommand": "npm run dev:web",
     "beforeBuildCommand": "npm run build:web"
   },
-  "tauri": {
-    "bundle": {
-      "active": true,
-      "targets": [
-        "app",
-        "msi",
-        "deb"
-      ],
-      "identifier": "com.akylas.mbview",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "resources": ["../resources/*"],
-      "externalBin": [],
-      "copyright": "© 2021 Akylas",
-      "category": "DeveloperTool",
-      "shortDescription": "",
-      "longDescription": "",
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": {
+      "../resources/*": "./"
+    },
+    "copyright": "© 2021 Akylas",
+    "category": "DeveloperTool",
+    "shortDescription": "",
+    "longDescription": "",
+    "linux": {
       "deb": {
         "depends": []
-      },
-      "macOS": {
-        "frameworks": [],
-        "minimumSystemVersion": "10.13",
-        "exceptionDomain": "localhost",
-        "signingIdentity": "Apple Development: Martin Guillon (4ZZRPWM525)",
-        "entitlements": null
-      },
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
       }
     },
-    "updater": {
-      "active": false
+    "macOS": {
+      "frameworks": [],
+      "minimumSystemVersion": "10.13",
+      "exceptionDomain": "localhost",
+      "signingIdentity": "Apple Development: Martin Guillon (4ZZRPWM525)"
     },
-    "allowlist": {
-      "all": false,
-      "path":{
-        "all":true
-      },
-      "dialog":{
-        "open":true
-      },
-      "window":{
-        "print":true
-      },
-      "shell":{
-        "open": true
-      },
-      "fs":{
-        "readFile": true,
-        "writeFile": true,
-        "scope": {
-          "allow": ["**"]
-        }
-      },
-      "protocol": {
-        "asset": true,
-        "assetScope": {
-          "allow": ["**"]
-        }
-      }
-    },
-    "security": {
-      "csp": "default-src blob: data: filesystem: ws: wss: asset: mbtiles: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'"
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
     }
+  },
+  "app": {
+    "security": {
+      "csp": "default-src blob: data: filesystem: ws: wss: asset: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self'"
+    },
+    "windows": [
+      {
+        "label": "main",
+        "minWidth": 400,
+        "minHeight": 200,
+        "url": "index.html"
+      }
+    ]
   }
 }

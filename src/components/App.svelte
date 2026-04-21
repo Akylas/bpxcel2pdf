@@ -1,9 +1,9 @@
 <script lang="ts">
   import { listen } from '@tauri-apps/api/event';
-  import { readBinaryFile } from '@tauri-apps/api/fs';
+  import { readFile } from '@tauri-apps/plugin-fs';
   import { basename } from '@tauri-apps/api/path';
-  import { open as openURl } from '@tauri-apps/api/shell';
-  import { open } from '@tauri-apps/api/dialog';
+  import { open as openURl } from '@tauri-apps/plugin-shell';
+  import { open } from '@tauri-apps/plugin-dialog';
   import {
     Button,
     DataTable,
@@ -75,7 +75,7 @@
   }
   async function handleDroppedFile(paths: string[]) {
     currentFilePath = paths[0];
-    const source = await readBinaryFile(currentFilePath);
+    const source = await readFile(currentFilePath);
     const xlsxData = xlsx.read(source, { type: 'array' });
     const sheet = xlsxData.Sheets[xlsxData.SheetNames[0]];
     json = xlsx.utils.sheet_to_json(sheet);
@@ -104,7 +104,7 @@
     window.print();
   }
 
-  listen<string>('tauri://menu', async ({ payload }) => {
+  listen<string>('menu', async ({ payload }) => {
     console.log('payload', payload);
     switch (payload) {
       case 'learn_more':
