@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import tailwindcss from '@tailwindcss/vite';
 import { readdirSync } from 'fs';
 import { join } from 'path';
 import config from './package.json' with { type: 'json' };
@@ -37,6 +38,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: !!process.env.TAURI_ENV_DEBUG,
     },
     plugins: [
+      tailwindcss(),
       svelte({
         onwarn(warning, defaultHandler) {
           if (ignoreWarnings.has(warning.code)) return;

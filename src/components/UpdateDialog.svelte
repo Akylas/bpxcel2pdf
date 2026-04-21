@@ -2,19 +2,26 @@
   import { getVersion } from '@tauri-apps/api/app';
   import { relaunch } from '@tauri-apps/plugin-process';
   import { check as checkUpdate, Update } from '@tauri-apps/plugin-updater';
-  import { InlineNotification, Modal, ProgressBar } from 'carbon-components-svelte';
+  import { Alert, Button, Modal, Progressbar } from 'flowbite-svelte';
   import { _ } from 'svelte-i18n';
-  type UpdateStatus = 'idle' | 'checking' | 'available' | 'uptodate' | 'downloading' | 'downloaded' | 'error';
 
-  export let open = false;
+  type UpdateStatus =
+    | 'idle'
+    | 'checking'
+    | 'available'
+    | 'uptodate'
+    | 'downloading'
+    | 'downloaded'
+    | 'error';
 
-  let status: UpdateStatus = 'idle';
-  let errorMessage = '';
-  let updateVersion = '';
-  let changelog = '';
-  let downloadProgress = 0;
-  let currentVersion = '';
-  let update: Update;
+  let open = $state(false);
+  let status: UpdateStatus = $state('idle');
+  let errorMessage = $state('');
+  let updateVersion = $state('');
+  let changelog = $state('');
+  let downloadProgress = $state(0);
+  let currentVersion = $state('');
+  let update: Update | null = $state(null);
 
   async function startCheck() {
     status = 'checking';
@@ -25,7 +32,7 @@
       if (update) {
         updateVersion = update.version;
         status = 'available';
-        changelog = update.body
+        changelog = update.body ?? '';
       } else {
         status = 'uptodate';
       }
@@ -36,18 +43,18 @@
   }
 
   async function downloadAndInstall() {
+    if (!update) return;
     status = 'downloading';
-    // Use milestone values to show coarse progress (pending → downloading → done).
-    // The tauri updater event does not expose byte-level progress in v1.
     downloadProgress = 0;
-    let contentLength;
+    let contentLength: number | undefined;
+    let downloaded = 0;
     try {
       await update.downloadAndInstall((event) => {
         if (event.event === 'Started') {
-           contentLength = event.data.contentLength;
-        }
-         else if (event.event === 'Progress') {
-          downloadProgress =  Math.round(event.data.chunkLength / contentLength * 100)
+          contentLength = event.data.contentLength;
+        } else if (event.event === 'Progress') {
+          downloaded += event.data.chunkLength;
+          downloadProgress = contentLength ? Math.round((downloaded / contentLength) * 100) : 0;
         } else if (event.event === 'Finished') {
           downloadProgress = 100;
           status = 'downloaded';
@@ -69,8 +76,10 @@
     await startCheck();
   }
 
-  $: primaryButtonText = getPrimaryButtonText(status);
-  $: primaryButtonDisabled = ['checking', 'downloading', 'uptodate', 'error'].includes(status);
+  const primaryButtonText = $derived(getPrimaryButtonText(status));
+  const primaryButtonDisabled = $derived(
+    ['checking', 'downloading', 'uptodate', 'error'].includes(status)
+  );
 
   function getPrimaryButtonText(s: UpdateStatus): string {
     if (s === 'downloaded') return $_('update_restart');
@@ -89,34 +98,20 @@
   }
 </script>
 
-<Modal
-  size="sm"
-  bind:open
-  modalHeading={$_('update_check_for_updates')}
-  primaryButtonText={primaryButtonText}
-  primaryButtonDisabled={primaryButtonDisabled}
-  secondaryButtonText={status !== 'downloaded' ? $_('close') : undefined}
-  on:click:button--primary={handlePrimary}
-  on:click:button--secondary={() => (open = false)}
-  on:close={() => (open = false)}
->
-  <div style="padding: 0 1rem 1rem;">
+<Modal bind:open title={$_('update_check_for_updates')} size="sm" onclose={() => (open = false)}>
+  <div style="padding: 0 0 1rem;">
     {#if status === 'checking'}
-      <ProgressBar helperText={$_('update_checking')} />
+      <Progressbar labelOutside={$_('update_checking')} animate />
     {:else if status === 'uptodate'}
-      <InlineNotification
-        lowContrast
-        kind="success"
-        title={$_('update_up_to_date')}
-        subtitle={$_('update_up_to_date_desc')}
-      />
+      <Alert color="green">
+        <span class="font-medium">{$_('update_up_to_date')}</span>
+        {$_('update_up_to_date_desc')}
+      </Alert>
     {:else if status === 'available'}
-      <InlineNotification
-        lowContrast
-        kind="info"
-        title={$_('update_available')}
-        subtitle="{currentVersion} → {updateVersion}"
-      />
+      <Alert color="blue">
+        <span class="font-medium">{$_('update_available')}</span>
+        {currentVersion} → {updateVersion}
+      </Alert>
       {#if changelog}
         <div style="margin-top: 1rem;">
           <p style="font-weight: 600; margin-bottom: 0.5rem;">{$_('update_changelog')}:</p>
@@ -127,7 +122,7 @@
               font-size: 0.875rem;
               max-height: 200px;
               overflow-y: auto;
-              background: var(--cds-field-01);
+              background: #f9fafb;
               padding: 0.75rem;
               border-radius: 4px;
             "
@@ -135,24 +130,24 @@
         </div>
       {/if}
     {:else if status === 'downloading'}
-      <ProgressBar
-        value={downloadProgress}
-        helperText={$_('update_downloading')}
-      />
+      <Progressbar progress={String(downloadProgress)} labelOutside={$_('update_downloading')} />
     {:else if status === 'downloaded'}
-      <InlineNotification
-        lowContrast
-        kind="success"
-        title={$_('update_downloaded')}
-        subtitle={$_('update_downloaded_desc')}
-      />
+      <Alert color="green">
+        <span class="font-medium">{$_('update_downloaded')}</span>
+        {$_('update_downloaded_desc')}
+      </Alert>
     {:else if status === 'error'}
-      <InlineNotification
-        lowContrast
-        kind="error"
-        title={$_('update_error')}
-        subtitle={errorMessage}
-      />
+      <Alert color="red">
+        <span class="font-medium">{$_('update_error')}</span>
+        {errorMessage}
+      </Alert>
     {/if}
   </div>
+  {#snippet footer()}
+    <Button onclick={handlePrimary} disabled={primaryButtonDisabled}>{primaryButtonText}</Button>
+    {#if status !== 'downloaded'}
+      <Button color="alternative" onclick={() => (open = false)}>{$_('close')}</Button>
+    {/if}
+  {/snippet}
 </Modal>
+

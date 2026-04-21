@@ -6,23 +6,23 @@
   import { open as openURl } from '@tauri-apps/plugin-shell';
   import { open } from '@tauri-apps/plugin-dialog';
   import {
+    Alert,
     Button,
-    DataTable,
-    Header,
-    HeaderGlobalAction,
-    HeaderUtilities,
-    SkipToContent,
+    Input,
+    Label,
     Modal,
+    Navbar,
+    NavBrand,
+    Table,
+    TableBody,
+    TableBodyCell,
+    TableBodyRow,
+    TableHead,
+    TableHeadCell,
     Tabs,
-    Tab,
-    TabContent,
-    TextInput,
-    Toolbar,
-    ToolbarContent,
-  } from 'carbon-components-svelte';
-  import Printer16 from 'carbon-icons-svelte/lib/Printer.svelte';
-  import SettingsAdjust16 from 'carbon-icons-svelte/lib/SettingsAdjust.svelte';
-  import TrashCan16 from 'carbon-icons-svelte/lib/TrashCan.svelte';
+    TabItem,
+  } from 'flowbite-svelte';
+  import { PrinterOutline, AdjustmentsHorizontalOutline, TrashBinOutline } from 'flowbite-svelte-icons';
   import { _ } from 'svelte-i18n';
   import FileDrop from 'svelte-tauri-filedrop';
   import * as xlsx from 'xlsx';
@@ -64,9 +64,8 @@
   let json: { [k: string]: string }[] | null = $state(null);
   let currentFilePath: string | null = $state(null);
   let total = $state(0);
-  let selected = $state(0);
-  let addIgnoredNew = $state<string | undefined>(undefined);
-  let addIgnoredFieldNew = $state<string | undefined>(undefined);
+  let addIgnoredNew = $state('');
+  let addIgnoredFieldNew = $state('');
 
   async function openFile() {
     try {
@@ -114,7 +113,6 @@
   $effect(() => {
     const win = getCurrentWindow();
     const unlistenPromise = listen<string>('menu', async ({ payload }) => {
-      console.log('payload', payload);
       switch (payload) {
         case 'open':
           openFile();
@@ -122,9 +120,9 @@
         case 'learn_more':
           openURl(REPO_URL);
           break;
-      case 'check_update':
-        updateDialogRef?.checkForUpdates();
-        break;
+        case 'check_update':
+          updateDialogRef?.checkForUpdates();
+          break;
         case 'print':
           printPDF();
           break;
@@ -147,13 +145,11 @@
     };
   });
 
-  async function deleteIgnoredItem(row: { id?: string }) {
-    if (row.id) {
-      const index = ignoredNames.indexOf(row.id);
-      if (index >= 0) {
-        ignoredNames.splice(index, 1);
-        localStorage.setItem('ignoredNames', JSON.stringify(ignoredNames));
-      }
+  async function deleteIgnoredItem(name: string) {
+    const index = ignoredNames.indexOf(name);
+    if (index >= 0) {
+      ignoredNames.splice(index, 1);
+      localStorage.setItem('ignoredNames', JSON.stringify(ignoredNames));
     }
   }
 
@@ -161,22 +157,16 @@
     if (addIgnoredNew) {
       ignoredNames.push(addIgnoredNew);
       localStorage.setItem('ignoredNames', JSON.stringify(ignoredNames));
-      addIgnoredNew = undefined;
+      addIgnoredNew = '';
       addIgnoredOpened = false;
     }
   }
 
-  async function onAddingIgnoredChange(event: CustomEvent<string>) {
-    addIgnoredNew = event.detail;
-  }
-
-  async function deleteIgnoredField(row: { id?: string }) {
-    if (row.id) {
-      const index = ignoredFields.indexOf(row.id);
-      if (index >= 0) {
-        ignoredFields.splice(index, 1);
-        localStorage.setItem('ignoredFields', JSON.stringify(ignoredFields));
-      }
+  async function deleteIgnoredField(field: string) {
+    const index = ignoredFields.indexOf(field);
+    if (index >= 0) {
+      ignoredFields.splice(index, 1);
+      localStorage.setItem('ignoredFields', JSON.stringify(ignoredFields));
     }
   }
 
@@ -184,13 +174,9 @@
     if (addIgnoredFieldNew) {
       ignoredFields.push(addIgnoredFieldNew);
       localStorage.setItem('ignoredFields', JSON.stringify(ignoredFields));
-      addIgnoredFieldNew = undefined;
+      addIgnoredFieldNew = '';
       addIgnoredFieldOpened = false;
     }
-  }
-
-  async function onAddingIgnoredFieldChange(event: CustomEvent<string>) {
-    addIgnoredFieldNew = event.detail;
   }
 
   function groupBy(objectArray: any[], filter: (obj: any) => string) {
@@ -238,22 +224,33 @@
 </script>
 
 <div class="container">
-  <Header company="Bonne Pioche" platformName="Excel 2 PDF">
-    <HeaderUtilities>
-      <HeaderGlobalAction aria-label={$_('print')} icon={Printer16} on:click={printPDF} />
-      <HeaderGlobalAction
+  <Navbar class="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-gray-700 px-4">
+    <NavBrand href="#">
+      <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+        Bonne Pioche&nbsp;<span class="text-gray-500 font-normal text-base">Excel 2 PDF</span>
+      </span>
+    </NavBrand>
+    <div class="flex items-center gap-1 ml-auto">
+      <Button size="sm" color="alternative" aria-label={$_('print')} onclick={printPDF}>
+        <PrinterOutline class="w-5 h-5" />
+      </Button>
+      <Button
+        size="sm"
+        color="alternative"
         aria-label={$_('settings')}
-        icon={SettingsAdjust16}
-        on:click={() => (settingsOpened = !settingsOpened)}
-      />
-    </HeaderUtilities>
-  </Header>
-  <Tabs bind:selected style="padding-top:3rem;width:100%;">
-    <Tab label="Précommandes" />
-    <!-- <Tab label="Résumé Forme" /> -->
-    <svelte:fragment slot="content">
-      <TabContent style="height:100%;padding-top:3rem;">
-        <div style="padding-top:10px; flex:auto;display:flex;height:100% !important;justify-content:center;">
+        onclick={() => (settingsOpened = true)}
+      >
+        <AdjustmentsHorizontalOutline class="w-5 h-5" />
+      </Button>
+    </div>
+  </Navbar>
+
+  <div style="padding-top: 4rem; height: 100%; display: flex; flex-direction: column;">
+    <Tabs style="width:100%">
+      <TabItem open title="Précommandes">
+        <div
+          style="padding-top:10px; flex:auto;display:flex;height:100%;justify-content:center;position:relative;"
+        >
           {#if json}
             <div
               id="section-to-print"
@@ -280,14 +277,12 @@
                     {/each}
                   </div>
                 {/each}
-                <!-- <div class="card"> -->
-                <!-- </div> -->
               </div>
             </div>
           {:else}
-            <Button style="align-self:center;text-align:center;" on:click={openFile}
-              >{$_('drag_xslx_file')}</Button
-            >
+            <Button style="align-self:center;text-align:center;" onclick={openFile}>
+              {$_('drag_xslx_file')}
+            </Button>
           {/if}
           <FileDrop extensions={['xlsx', 'csv']} handleFiles={handleDroppedFile} let:files>
             <div class="dropzone" class:droppable={files.length > 0}>
@@ -300,109 +295,102 @@
             </div>
           </FileDrop>
         </div>
-      </TabContent>
-      <!-- <TabContent /> -->
-    </svelte:fragment>
-  </Tabs>
+      </TabItem>
+    </Tabs>
+  </div>
 
-  <Modal
-    size="sm"
-    bind:open={settingsOpened}
-    modalHeading={$_('settings')}
-    primaryButtonText={$_('close')}
-    on:click:button--primary={() => (settingsOpened = false)}
-    on:open
-    on:close={reload}
-    on:submit
-  >
-    <div style="padding:10px">
-      <DataTable
-        title={$_('ignored')}
-        description={$_('ignored_items')}
-        size="short"
-        headers={[
-          { key: 'name', value: $_('name') },
-          { key: 'overflow', empty: true },
-        ]}
-        rows={ignoredNames.map((s) => ({ id: s, name: s }))}
-      >
-        <svelte:fragment slot="cell" let:cell let:row>
-          {#if cell.key === 'overflow'}
-            <Button
-              kind="danger-ghost"
-              iconDescription={$_('delete')}
-              size="small"
-              icon={TrashCan16}
-              on:click={() => deleteIgnoredItem(row)}
-            />
-            <!-- <OverflowMenu flipped>
-              <OverflowMenuItem danger text={$_('delete')} on:click={deleteIgnoredItem} />
-            </OverflowMenu> -->
-          {:else}{cell.value}{/if}
-        </svelte:fragment>
-        <Toolbar size="sm">
-          <ToolbarContent>
-            <Button on:click={() => (addIgnoredOpened = true)}>{$_('add')}</Button>
-          </ToolbarContent>
-        </Toolbar>
-      </DataTable>
+  <!-- Settings Modal -->
+  <Modal bind:open={settingsOpened} title={$_('settings')} size="sm" onclose={reload}>
+    <div class="space-y-6">
+      <!-- Ignored Names Table -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white">{$_('ignored')}</h3>
+            <p class="text-sm text-gray-500">{$_('ignored_items')}</p>
+          </div>
+          <Button size="sm" onclick={() => (addIgnoredOpened = true)}>{$_('add')}</Button>
+        </div>
+        <Table>
+          <TableHead>
+            <TableHeadCell>{$_('name')}</TableHeadCell>
+            <TableHeadCell></TableHeadCell>
+          </TableHead>
+          <TableBody>
+            {#each ignoredNames as name}
+              <TableBodyRow>
+                <TableBodyCell>{name}</TableBodyCell>
+                <TableBodyCell>
+                  <Button color="red" size="xs" onclick={() => deleteIgnoredItem(name)}>
+                    <TrashBinOutline class="w-4 h-4" />
+                  </Button>
+                </TableBodyCell>
+              </TableBodyRow>
+            {/each}
+          </TableBody>
+        </Table>
+      </div>
 
-      <DataTable
-        title={$_('ignored_fields')}
-        description={$_('ignored_fields_items')}
-        size="short"
-        headers={[
-          { key: 'name', value: $_('name') },
-          { key: 'overflow', empty: true },
-        ]}
-        rows={ignoredFields.map((s) => ({ id: s, name: s }))}
-      >
-        <svelte:fragment slot="cell" let:cell let:row>
-          {#if cell.key === 'overflow'}
-            <Button
-              kind="danger-ghost"
-              iconDescription={$_('delete')}
-              size="small"
-              icon={TrashCan16}
-              on:click={() => deleteIgnoredField(row)}
-            />
-            <!-- <OverflowMenu flipped>
-              <OverflowMenuItem danger text={$_('delete')} on:click={deleteIgnoredItem} />
-            </OverflowMenu> -->
-          {:else}{cell.value}{/if}
-        </svelte:fragment>
-        <Toolbar size="sm">
-          <ToolbarContent>
-            <Button on:click={() => (addIgnoredFieldOpened = true)}>{$_('add')}</Button>
-          </ToolbarContent>
-        </Toolbar>
-      </DataTable>
+      <!-- Ignored Fields Table -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+              {$_('ignored_fields')}
+            </h3>
+            <p class="text-sm text-gray-500">{$_('ignored_fields_items')}</p>
+          </div>
+          <Button size="sm" onclick={() => (addIgnoredFieldOpened = true)}>{$_('add')}</Button>
+        </div>
+        <Table>
+          <TableHead>
+            <TableHeadCell>{$_('name')}</TableHeadCell>
+            <TableHeadCell></TableHeadCell>
+          </TableHead>
+          <TableBody>
+            {#each ignoredFields as field}
+              <TableBodyRow>
+                <TableBodyCell>{field}</TableBodyCell>
+                <TableBodyCell>
+                  <Button color="red" size="xs" onclick={() => deleteIgnoredField(field)}>
+                    <TrashBinOutline class="w-4 h-4" />
+                  </Button>
+                </TableBodyCell>
+              </TableBodyRow>
+            {/each}
+          </TableBody>
+        </Table>
+      </div>
     </div>
+    {#snippet footer()}
+      <Button onclick={() => (settingsOpened = false)}>{$_('close')}</Button>
+    {/snippet}
   </Modal>
 
-  <Modal
-    bind:open={addIgnoredOpened}
-    modalHeading={$_('add_ignored')}
-    primaryButtonText={$_('add')}
-    secondaryButtonText={$_('cancel')}
-    on:click:button--secondary={() => (addIgnoredOpened = false)}
-    on:open
-    on:close
-    on:submit={addIgnoredItem}
-  >
-    <TextInput labelText={$_('text')} on:change={onAddingIgnoredChange} />
+  <!-- Add Ignored Name Modal -->
+  <Modal bind:open={addIgnoredOpened} title={$_('add_ignored')} size="sm">
+    <Label class="block">
+      {$_('text')}
+      <Input bind:value={addIgnoredNew} class="mt-1" />
+    </Label>
+    {#snippet footer()}
+      <Button onclick={addIgnoredItem}>{$_('add')}</Button>
+      <Button color="alternative" onclick={() => (addIgnoredOpened = false)}>{$_('cancel')}</Button>
+    {/snippet}
   </Modal>
-  <Modal
-    bind:open={addIgnoredFieldOpened}
-    modalHeading={$_('add_ignored')}
-    primaryButtonText={$_('add')}
-    secondaryButtonText={$_('cancel')}
-    on:click:button--secondary={() => (addIgnoredFieldOpened = false)}
-    on:open
-    on:close
-    on:submit={addIgnoredField}
-  >
-    <TextInput labelText={$_('text')} on:change={onAddingIgnoredFieldChange} />
+
+  <!-- Add Ignored Field Modal -->
+  <Modal bind:open={addIgnoredFieldOpened} title={$_('add_ignored')} size="sm">
+    <Label class="block">
+      {$_('text')}
+      <Input bind:value={addIgnoredFieldNew} class="mt-1" />
+    </Label>
+    {#snippet footer()}
+      <Button onclick={addIgnoredField}>{$_('add')}</Button>
+      <Button color="alternative" onclick={() => (addIgnoredFieldOpened = false)}>
+        {$_('cancel')}
+      </Button>
+    {/snippet}
   </Modal>
 
   <UpdateDialog bind:this={updateDialogRef} />
@@ -417,7 +405,7 @@
     z-index: 100;
     padding: 20px;
     background: transparent;
-    border: 1 solid #eee;
+    border: 1px solid #eee;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -426,3 +414,4 @@
     background: #d6dff088;
   }
 </style>
+
