@@ -48,6 +48,9 @@ fn main() {
         .item(&print_item)
         .build()?;
 
+      // undo/redo are only natively handled on macOS; skip them on other platforms
+      // to avoid blank or no-op menu entries (muda GTK/Windows don't implement them)
+      #[cfg(target_os = "macos")]
       let edit_menu = SubmenuBuilder::new(handle, "Edit")
         .undo()
         .redo()
@@ -58,15 +61,49 @@ fn main() {
         .separator()
         .select_all()
         .build()?;
-
-      let view_menu = SubmenuBuilder::new(handle, "View")
-        .fullscreen()
+      #[cfg(not(target_os = "macos"))]
+      let edit_menu = SubmenuBuilder::new(handle, "Edit")
+        .cut()
+        .copy()
+        .paste()
+        .separator()
+        .select_all()
         .build()?;
 
+      // fullscreen() predefined item is macOS-only in muda; use a custom item on all
+      // platforms so the View menu is never empty and the action always works.
+      let fullscreen_accel = if cfg!(target_os = "macos") {
+        "Ctrl+Meta+F"
+      } else {
+        "F11"
+      };
+      let fullscreen_item = MenuItemBuilder::with_id("fullscreen", "Toggle Full Screen")
+        .accelerator(fullscreen_accel)
+        .build(handle)?;
+      let view_menu = SubmenuBuilder::new(handle, "View")
+        .item(&fullscreen_item)
+        .build()?;
+
+      // minimize/maximize/close_window predefined items are not supported on Linux (GTK)
+      // and fullscreen is not handled on Windows — use custom items on all platforms so
+      // the Window menu always has visible, working entries.
+      let minimize_item = MenuItemBuilder::with_id("minimize", "Minimize")
+        .accelerator("CmdOrControl+M")
+        .build(handle)?;
+      let maximize_label = if cfg!(target_os = "macos") {
+        "Zoom"
+      } else {
+        "Maximize"
+      };
+      let maximize_item =
+        MenuItemBuilder::with_id("maximize", maximize_label).build(handle)?;
+      let close_item = MenuItemBuilder::with_id("close_window", "Close Window")
+        .accelerator("CmdOrControl+W")
+        .build(handle)?;
       let window_menu = SubmenuBuilder::new(handle, "Window")
-        .minimize()
-        .maximize()
-        .close_window()
+        .item(&minimize_item)
+        .item(&maximize_item)
+        .item(&close_item)
         .build()?;
 
       let learn_more_item =

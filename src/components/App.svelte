@@ -1,5 +1,6 @@
 <script lang="ts">
   import { listen } from '@tauri-apps/api/event';
+  import { getCurrentWindow } from '@tauri-apps/api/window';
   import { readFile } from '@tauri-apps/plugin-fs';
   import { basename } from '@tauri-apps/api/path';
   import { open as openURl } from '@tauri-apps/plugin-shell';
@@ -109,14 +110,30 @@
   }
 
   $effect(() => {
+    const win = getCurrentWindow();
     const unlistenPromise = listen<string>('menu', async ({ payload }) => {
       console.log('payload', payload);
       switch (payload) {
+        case 'open':
+          openFile();
+          break;
         case 'learn_more':
           openURl(REPO_URL);
           break;
         case 'print':
           printPDF();
+          break;
+        case 'fullscreen':
+          win.setFullscreen(!(await win.isFullscreen()));
+          break;
+        case 'minimize':
+          win.minimize();
+          break;
+        case 'maximize':
+          win.toggleMaximize();
+          break;
+        case 'close_window':
+          win.close();
           break;
       }
     });
