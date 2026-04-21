@@ -2,14 +2,11 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
 
-    // require `import type` instead fo `import` for types
-    // svelte-preprocess apparently needs this
-    "importsNotUsedAsValues": "error",
+    "verbatimModuleSyntax": true,
     "isolatedModules": true,
 
-    // To have svelte warnings/errors correct position
     "sourceMap": true,
 
     "resolveJsonModule": true,
@@ -17,8 +14,7 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
 
-    // Prevent type errors
-    "types": ["svelte"],
+    "types": [],
     "typeRoots": ["./node_modules/@types", "./src/types"],
 
     "strict": true,
