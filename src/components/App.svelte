@@ -1,9 +1,10 @@
 <script lang="ts">
   import { listen } from '@tauri-apps/api/event';
-  import { readBinaryFile } from '@tauri-apps/api/fs';
+  import { getCurrentWindow } from '@tauri-apps/api/window';
+  import { readFile } from '@tauri-apps/plugin-fs';
   import { basename } from '@tauri-apps/api/path';
-  import { open as openURl } from '@tauri-apps/api/shell';
-  import { open } from '@tauri-apps/api/dialog';
+  import { open as openURl } from '@tauri-apps/plugin-shell';
+  import { open } from '@tauri-apps/plugin-dialog';
   import {
     Button,
     DataTable,
@@ -27,35 +28,45 @@
   import * as xlsx from 'xlsx';
   import UpdateDialog from './UpdateDialog.svelte';
 
-  let settingsOpened = false;
-  let addIgnoredOpened = false;
-  let addIgnoredFieldOpened = false;
   let updateDialogRef: UpdateDialog;
-  let firstnameFields: string[] = JSON.parse(localStorage.getItem('firstnameField')) || ['Prénom'];
-  let nameFields: string[] = JSON.parse(localStorage.getItem('nameField')) || [
-    'Nom',
-    'Nom de famille',
-  ];
-  let phoneFields: string[] = JSON.parse(localStorage.getItem('phoneField')) || ['Téléphone'];
-  let ignoredFields = JSON.parse(
-    localStorage.getItem('ignoredFields') ||
-      JSON.stringify(['Horodateur', 'Adresse email', 'Téléphone', 'Commentaires libres'])
+  let settingsOpened = $state(false);
+  let addIgnoredOpened = $state(false);
+  let addIgnoredFieldOpened = $state(false);
+  let firstnameFields: string[] = $state(
+    JSON.parse(localStorage.getItem('firstnameField')) || ['Prénom']
   );
-  let ignoredNames = JSON.parse(
-    localStorage.getItem('ignoredNames') ||
-      JSON.stringify([
-        'Reliquat magasin',
-        'Total commandés aux fournisseurs',
-        'TOTAL CLIENT',
-        'Total commandé au producteurs',
-        'En plus pour le magasin',
-        'Total précommandes',
-      ])
+  let nameFields: string[] = $state(
+    JSON.parse(localStorage.getItem('nameField')) || ['Nom', 'Nom de famille']
+  );
+  let phoneFields: string[] = $state(
+    JSON.parse(localStorage.getItem('phoneField')) || ['Téléphone']
+  );
+  let ignoredFields: string[] = $state(
+    JSON.parse(
+      localStorage.getItem('ignoredFields') ||
+        JSON.stringify(['Horodateur', 'Adresse email', 'Téléphone', 'Commentaires libres'])
+    )
+  );
+  let ignoredNames: string[] = $state(
+    JSON.parse(
+      localStorage.getItem('ignoredNames') ||
+        JSON.stringify([
+          'Reliquat magasin',
+          'Total commandés aux fournisseurs',
+          'TOTAL CLIENT',
+          'Total commandé au producteurs',
+          'En plus pour le magasin',
+          'Total précommandes',
+        ])
+    )
   );
 
-  let json: { [k: string]: string }[] = null;
-  let currentFilePath: string = null;
-  let total = 0;
+  let json: { [k: string]: string }[] | null = $state(null);
+  let currentFilePath: string | null = $state(null);
+  let total = $state(0);
+  let selected = $state(0);
+  let addIgnoredNew = $state<string | undefined>(undefined);
+  let addIgnoredFieldNew = $state<string | undefined>(undefined);
 
   async function openFile() {
     try {
@@ -75,9 +86,10 @@
       handleDroppedFile([currentFilePath]);
     }
   }
+
   async function handleDroppedFile(paths: string[]) {
     currentFilePath = paths[0];
-    const source = await readBinaryFile(currentFilePath);
+    const source = await readFile(currentFilePath);
     const xlsxData = xlsx.read(source, { type: 'array' });
     const sheet = xlsxData.Sheets[xlsxData.SheetNames[0]];
     json = xlsx.utils.sheet_to_json(sheet);
@@ -91,98 +103,111 @@
 
     json.forEach((d) => {
       ignoredFields.forEach((k) => delete d[k]);
-      // Object.keys(d).forEach((k) => {
-      //   // let index = k.indexOf('[');
-      //   // if (index !== -1) {
-      //   //   let index2 = k.indexOf(']');
-      //   //   d[k.substring(index + 1, index2)] = d[k];
-      //   //   delete d[k];
-      //   // }
-      // });
     });
     document.title = await basename(paths[0]);
   }
+
   async function printPDF() {
     window.print();
   }
 
-  listen<string>('tauri://menu', async ({ payload }) => {
-    console.log('payload', payload);
-    switch (payload) {
-      case 'learn_more':
-        openURl(REPO_URL);
-        break;
+  $effect(() => {
+    const win = getCurrentWindow();
+    const unlistenPromise = listen<string>('menu', async ({ payload }) => {
+      console.log('payload', payload);
+      switch (payload) {
+        case 'open':
+          openFile();
+          break;
+        case 'learn_more':
+          openURl(REPO_URL);
+          break;
       case 'check_update':
         updateDialogRef?.checkForUpdates();
         break;
-      case 'print':
-        printPDF();
-        break;
-    }
+        case 'print':
+          printPDF();
+          break;
+        case 'fullscreen':
+          win.setFullscreen(!(await win.isFullscreen()));
+          break;
+        case 'minimize':
+          win.minimize();
+          break;
+        case 'maximize':
+          win.toggleMaximize();
+          break;
+        case 'close_window':
+          win.close();
+          break;
+      }
+    });
+    return () => {
+      unlistenPromise.then((unlisten) => unlisten());
+    };
   });
 
-  async function deleteIgnoredItem(row) {
+  async function deleteIgnoredItem(row: { id?: string }) {
     if (row.id) {
       const index = ignoredNames.indexOf(row.id);
       if (index >= 0) {
         ignoredNames.splice(index, 1);
-
         localStorage.setItem('ignoredNames', JSON.stringify(ignoredNames));
-        ignoredNames = ignoredNames;
       }
     }
   }
+
   async function addIgnoredItem() {
     if (addIgnoredNew) {
       ignoredNames.push(addIgnoredNew);
       localStorage.setItem('ignoredNames', JSON.stringify(ignoredNames));
-      ignoredNames = ignoredNames;
-      addIgnoredNew = null;
+      addIgnoredNew = undefined;
       addIgnoredOpened = false;
     }
   }
 
-  let addIgnoredNew;
-  async function onAddingIgnoredChange(event) {
+  async function onAddingIgnoredChange(event: CustomEvent<string>) {
     addIgnoredNew = event.detail;
   }
-  async function deleteIgnoredField(row) {
+
+  async function deleteIgnoredField(row: { id?: string }) {
     if (row.id) {
       const index = ignoredFields.indexOf(row.id);
       if (index >= 0) {
         ignoredFields.splice(index, 1);
-
         localStorage.setItem('ignoredFields', JSON.stringify(ignoredFields));
-        ignoredFields = ignoredFields;
       }
     }
   }
+
   async function addIgnoredField() {
     if (addIgnoredFieldNew) {
       ignoredFields.push(addIgnoredFieldNew);
       localStorage.setItem('ignoredFields', JSON.stringify(ignoredFields));
-      ignoredFields = ignoredFields;
-      addIgnoredFieldNew = null;
+      addIgnoredFieldNew = undefined;
       addIgnoredFieldOpened = false;
     }
   }
 
-  let addIgnoredFieldNew;
-  async function onAddingIgnoredFieldChange(event) {
+  async function onAddingIgnoredFieldChange(event: CustomEvent<string>) {
     addIgnoredFieldNew = event.detail;
   }
-  function groupBy(objectArray, filter) {
-    return objectArray.reduce((acc, obj) => {
-      const key = filter(obj);
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      // Add object to list for given key's value
-      acc[key].push(obj);
-      return acc;
-    }, {});
+
+  function groupBy(objectArray: any[], filter: (obj: any) => string) {
+    return objectArray.reduce(
+      (acc, obj) => {
+        const key = filter(obj);
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(obj);
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
   }
-  function computeValue(k, value) {
+
+  function computeValue(k: string, value: string) {
     try {
       const parsed = JSON.parse(value);
       if (Array.isArray(parsed)) {
@@ -193,25 +218,23 @@
           return parsed.join(', ');
         }
         const group = groupBy(parsed, (s) => s.replace(/\d+/, '%s'));
-        let actual = [];
+        const actual: string[] = [];
         Object.keys(group).forEach((k) => {
-          const total = group[k].reduce((acc, obj) => {
+          const total = group[k].reduce((acc: number, obj: string) => {
             return (
               acc + (obj.match(/\d+/g) || []).map((n) => parseInt(n, 10)).reduce((a, b) => a + b, 0)
             );
           }, 0);
-          actual.push(k.replace('%s', total));
+          actual.push(k.replace('%s', String(total)));
         });
         return actual.join(', ');
       } else {
         return value;
       }
-      // try to do the sum
     } catch (error) {
       return value;
     }
   }
-  let selected = 0;
 </script>
 
 <div class="container">

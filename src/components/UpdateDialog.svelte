@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { checkUpdate, installUpdate, onUpdaterEvent } from '@tauri-apps/api/updater';
-  import { relaunch } from '@tauri-apps/api/process';
   import { getVersion } from '@tauri-apps/api/app';
-  import { Button, InlineNotification, Modal, ProgressBar } from 'carbon-components-svelte';
+  import { relaunch } from '@tauri-apps/plugin-process';
+  import { check as checkUpdate, Update } from '@tauri-apps/plugin-updater';
+  import { InlineNotification, Modal, ProgressBar } from 'carbon-components-svelte';
   import { _ } from 'svelte-i18n';
-
   type UpdateStatus = 'idle' | 'checking' | 'available' | 'uptodate' | 'downloading' | 'downloaded' | 'error';
 
   export let open = false;
@@ -15,17 +14,18 @@
   let changelog = '';
   let downloadProgress = 0;
   let currentVersion = '';
+  let update: Update;
 
   async function startCheck() {
     status = 'checking';
     errorMessage = '';
     try {
       currentVersion = await getVersion();
-      const { shouldUpdate, manifest } = await checkUpdate();
-      if (shouldUpdate && manifest) {
-        updateVersion = manifest.version;
-        changelog = manifest.body || '';
+      update = await checkUpdate();
+      if (update) {
+        updateVersion = update.version;
         status = 'available';
+        changelog = update.body
       } else {
         status = 'uptodate';
       }
@@ -40,22 +40,19 @@
     // Use milestone values to show coarse progress (pending → downloading → done).
     // The tauri updater event does not expose byte-level progress in v1.
     downloadProgress = 0;
+    let contentLength;
     try {
-      const unlisten = await onUpdaterEvent(({ error, status: evtStatus }) => {
-        if (evtStatus === 'PENDING') {
-          downloadProgress = 10;
-        } else if (evtStatus === 'DOWNLOADING') {
-          downloadProgress = 50;
-        } else if (evtStatus === 'DONE') {
+      await update.downloadAndInstall((event) => {
+        if (event.event === 'Started') {
+           contentLength = event.data.contentLength;
+        }
+         else if (event.event === 'Progress') {
+          downloadProgress =  Math.round(event.data.chunkLength / contentLength * 100)
+        } else if (event.event === 'Finished') {
           downloadProgress = 100;
           status = 'downloaded';
-        } else if (error) {
-          status = 'error';
-          errorMessage = error;
         }
       });
-      await installUpdate();
-      unlisten();
       status = 'downloaded';
     } catch (err) {
       status = 'error';
