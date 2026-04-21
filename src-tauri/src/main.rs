@@ -75,7 +75,11 @@ fn main() {
       // You should always have a Help menu on macOS because it will automatically
       // show a menu search field
       "Help",
-      Menu::with_items([CustomMenuItem::new("learn_more", "Learn More").into()]),
+      Menu::with_items([
+        CustomMenuItem::new("learn_more", "Learn More").into(),
+        MenuItem::Separator.into(),
+        CustomMenuItem::new("check_update", "Check for Updates...").into(),
+      ]),
     ));
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![])

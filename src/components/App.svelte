@@ -25,10 +25,12 @@
   import { _ } from 'svelte-i18n';
   import FileDrop from 'svelte-tauri-filedrop';
   import * as xlsx from 'xlsx';
+  import UpdateDialog from './UpdateDialog.svelte';
 
   let settingsOpened = false;
   let addIgnoredOpened = false;
   let addIgnoredFieldOpened = false;
+  let updateDialogRef: UpdateDialog;
   let firstnameFields: string[] = JSON.parse(localStorage.getItem('firstnameField')) || ['Prénom'];
   let nameFields: string[] = JSON.parse(localStorage.getItem('nameField')) || [
     'Nom',
@@ -109,6 +111,9 @@
     switch (payload) {
       case 'learn_more':
         openURl(REPO_URL);
+        break;
+      case 'check_update':
+        updateDialogRef?.checkForUpdates();
         break;
       case 'print':
         printPDF();
@@ -376,6 +381,8 @@
   >
     <TextInput labelText={$_('text')} on:change={onAddingIgnoredFieldChange} />
   </Modal>
+
+  <UpdateDialog bind:this={updateDialogRef} />
 </div>
 
 <style>

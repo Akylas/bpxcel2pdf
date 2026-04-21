@@ -14,5 +14,17 @@
   "print": "print",
   "save": "save",
   "settings": "parameters",
-  "text": "text"
+  "text": "text",
+  "update_available": "Update available",
+  "update_changelog": "Changelog",
+  "update_check_for_updates": "Check for Updates",
+  "update_checking": "Checking for updates…",
+  "update_download_install": "Download & Install",
+  "update_downloaded": "Update ready",
+  "update_downloaded_desc": "The update has been installed. Restart the app to apply it.",
+  "update_downloading": "Downloading update…",
+  "update_error": "Update failed",
+  "update_restart": "Restart now",
+  "update_up_to_date": "You're up to date",
+  "update_up_to_date_desc": "No updates are currently available."
 }

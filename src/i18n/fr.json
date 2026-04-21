@@ -14,5 +14,17 @@
   "print": "imprimer",
   "save": "enregistrer",
   "settings": "paramètres",
-  "text": "texte"
+  "text": "texte",
+  "update_available": "Mise à jour disponible",
+  "update_changelog": "Notes de version",
+  "update_check_for_updates": "Rechercher des mises à jour",
+  "update_checking": "Recherche de mises à jour…",
+  "update_download_install": "Télécharger et installer",
+  "update_downloaded": "Mise à jour prête",
+  "update_downloaded_desc": "La mise à jour a été installée. Redémarrez l'application pour l'appliquer.",
+  "update_downloading": "Téléchargement de la mise à jour…",
+  "update_error": "Échec de la mise à jour",
+  "update_restart": "Redémarrer maintenant",
+  "update_up_to_date": "Vous êtes à jour",
+  "update_up_to_date_desc": "Aucune mise à jour n'est disponible pour le moment."
 }

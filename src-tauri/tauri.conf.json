@@ -47,7 +47,12 @@
       }
     },
     "updater": {
-      "active": false
+      "active": false,
+      "dialog": false,
+      "pubkey": "",
+      "endpoints": [
+        "https://github.com/Akylas/bpxcel2pdf/releases/latest/download/latest.json"
+      ]
     },
     "allowlist": {
       "all": false,
@@ -62,6 +67,9 @@
       },
       "shell":{
         "open": true
+      },
+      "process": {
+        "relaunch": true
       },
       "fs":{
         "readFile": true,

@@ -22,8 +22,10 @@ tauri = { version = "1.2.4", features = [
   "fs-read-file",
   "fs-write-file",
   "path-all",
+  "process-relaunch",
   "protocol-asset",
   "shell-open",
+  "updater",
   "window-print"
 ] }
 tauri-plugin-window-state = "0.1"
