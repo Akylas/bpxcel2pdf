@@ -12,6 +12,8 @@ fn main() {
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::new().build())
     .plugin(tauri_plugin_dialog::init())
+    .plugin(tauri_plugin_updater::Builder::new().build())
+    .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_shell::init())
     .setup(|app| {
@@ -108,8 +110,12 @@ fn main() {
 
       let learn_more_item =
         MenuItemBuilder::with_id("learn_more", "Learn More").build(handle)?;
+      let check_update_item =
+        MenuItemBuilder::with_id("check_update", "Check for Updates...").build(handle)?;
+
       let help_menu = SubmenuBuilder::new(handle, "Help")
         .item(&learn_more_item)
+        .item(&check_update_item)
         .build()?;
 
       let menu = menu_builder
