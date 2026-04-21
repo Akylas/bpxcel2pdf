@@ -7,7 +7,8 @@ Array.prototype.sortBy = function (cfg) {
 };
 
 import { init, getLocaleFromNavigator, addMessages } from 'svelte-i18n';
-import './carbon.css';
+// import './carbon.css';
+import 'carbon-components-svelte/css/all.css';
 
 import en from './i18n/en.json';
 import fr from './i18n/fr.json';

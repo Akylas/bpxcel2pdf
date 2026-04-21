@@ -3,7 +3,7 @@
 </div>
 
 <p align="center"><span><b>MBTiles Viewer</b>, a cross-platform MBTiles Viewer.</span></p>
-<h4 align="center"><span><a href="https://github.com/Akylas/mbview-rs/releases">Download</a></span> • <span><a href="https://github.com/Akylas/mbview-rs/discussions">Discussions</a></span></h4>
+<h4 align="center"><span><a href="https://github.com/Akylas/bpxcel2pdf/releases">Download</a></span> • <span><a href="https://github.com/Akylas/bpxcel2pdf/discussions">Discussions</a></span></h4>
 
 <div align="center">
 
@@ -40,29 +40,29 @@ MBTiles Viewer is a tool to view and inspect `mbtiles` files without the need of
 -   multiple themes
 -   localized (fr/en for now)
 
-You can give your suggestions and feedback on our [Discussions](https://github.com/Akylas/mbview-rs/discussions/) page. If you feel comfortable in writing code using Typescript and Rust, we highly encourage you to [contribute to this project](https://xplorer.space/docs/community/Contributing/).
+You can give your suggestions and feedback on our [Discussions](https://github.com/Akylas/bpxcel2pdf/discussions/) page. If you feel comfortable in writing code using Typescript and Rust, we highly encourage you to [contribute to this project](https://xplorer.space/docs/community/Contributing/).
 
 ---
 
 ## Project Roadmap
 
-Recommend us a feature by [opening an Discussion](https://github.com/Akylas/mbview-rs/discussions) if you'd like to.
+Recommend us a feature by [opening an Discussion](https://github.com/Akylas/bpxcel2pdf/discussions) if you'd like to.
 
 ---
 
 ## Installation
 
-If you want to install on your system, you can download the installer for your operating system [on the release page](https://github.com/Akylas/mbview-rs/releases).
+If you want to install on your system, you can download the installer for your operating system [on the release page](https://github.com/Akylas/bpxcel2pdf/releases).
 
 ---
 
 ## Bug Reporting
 
-If you find any bugs, please report it by submitting an issue on our [issue page](https://github.com/Akylas/mbview-rs/issues) with a detailed explanation. Giving some screenshots would also be very helpful.
+If you find any bugs, please report it by submitting an issue on our [issue page](https://github.com/Akylas/bpxcel2pdf/issues) with a detailed explanation. Giving some screenshots would also be very helpful.
 
 ## Feature Request
 
-You can also submit a feature request on our [issue page](https://github.com/Akylas/mbview-rs) or [discussions](https://github.com/Akylas/mbview-rs/discussions) and we will try to implement it as soon as possible. If you want to contribute to this project, please [contribute to this project](https://xplorer.space/docs/community/Contributing/).
+You can also submit a feature request on our [issue page](https://github.com/Akylas/bpxcel2pdf) or [discussions](https://github.com/Akylas/bpxcel2pdf/discussions) and we will try to implement it as soon as possible. If you want to contribute to this project, please [contribute to this project](https://xplorer.space/docs/community/Contributing/).
 
 ---
 
@@ -78,13 +78,13 @@ If you want to run this project in your local system, please follow this guide:
 3. Follow [this guide](https://tauri.studio/en/docs/getting-started/intro/#setting-up-your-environment) to set up Tauri environment
 
 ```sh
-$ git clone https://github.com/<your_github_username>/mbview-rs.git
+$ git clone https://github.com/<your_github_username>/bpxcel2pdf.git
 ```
 
 4. Change directory to the root directory of this project
 
 ```sh
-$ cd mbview-rs
+$ cd bpxcel2pdf
 ```
 
 5. Install all dependencies using [`pnpm`](https://pnpm.io/) or [`yarn`](https://yarnpkg.com/)
@@ -107,4 +107,4 @@ We highly encourage you to contribute to this project (even if you are a beginne
 
 ## LICENSE
 
-[Apache-2.0](https://github.com/Akylas/mbview-rs/blob/master/LICENSE)
+[Apache-2.0](https://github.com/Akylas/bpxcel2pdf/blob/master/LICENSE)
