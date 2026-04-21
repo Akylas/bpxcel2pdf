@@ -44,14 +44,6 @@
   "app": {
     "security": {
       "csp": "default-src blob: data: filesystem: ws: wss: asset: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self'"
-    },
-    "windows": [
-      {
-        "label": "main",
-        "minWidth": 400,
-        "minHeight": 200,
-        "url": "index.html"
-      }
-    ]
+    }
   }
 }
